@@ -1,0 +1,422 @@
+import type { TourConfig } from "@/features/learning/types";
+import { getModule } from "@/shared/lib/curriculum";
+import { fillInput } from "@/shared/lib/tour-utils";
+
+const HOME = "/";
+const mod = getModule("oms")!;
+
+export const OmsTour: TourConfig = {
+  moduleId: "oms",
+  pageKey: "oms",
+  pageHref: "/oms/fulfillment-locations",
+  parentModuleName: "Fulfillment Locations",
+  track: "OMS",
+  number: mod.number,
+  title: mod.title,
+  skills: mod.skills,
+  homeHref: HOME,
+  glossaryKeys: [
+    "Fulfillment Location",
+    "Partner Location",
+    "Location Type",
+    "Category",
+    "Warehouse",
+    "Store",
+    "WMS2",
+    "USP",
+    "SFS",
+    "Client Location Mapping",
+  ],
+  pitfalls: [
+    "Wrong Location Type — Store behaves very differently from Warehouse",
+    "Leaving Timezone blank; it drives SLA and dispatch cut-offs",
+    "Confusing a fulfillment location with a supplier / customer partner location",
+    "Creating the location but never mapping it to the client",
+    "Bulk CSV with a type or timeZone value the system does not accept",
+  ],
+  scenarios: [
+    {
+      id: "add-one",
+      title: "Add one location",
+      story:
+        "ABC Fashion is opening a Bengaluru warehouse. Find the existing locations first, then register the new one through the form.",
+    },
+    {
+      id: "bulk",
+      title: "Bulk upload locations",
+      story:
+        "ABC Fashion is enabling 40 retail stores for Ship-from-Store. One-by-one is too slow — use the Bulk Upload tab and a CSV.",
+    },
+  ],
+  summary: {
+    title: "Fulfillment Locations — complete",
+    intro:
+      "You browsed the location directory and registered new fulfillment locations — the places OMS ships from and receives into.",
+    takeaways: [
+      "A fulfillment location is the client's own warehouse or store — not a supplier or customer address",
+      "Location Type changes behaviour: Warehouse, Store (SFS), USP (vendor stock), WMS2 (WMS-operated)",
+      "Timezone drives SLA timers and dispatch cut-offs, so it is mandatory",
+      "Bulk Upload takes up to 1000 CSV rows for mass onboarding",
+    ],
+    recap: [
+      "Inward: supplier partner location → fulfillment location",
+      "Outward: fulfillment location → customer partner location",
+      "A location is unusable until it is mapped to the client",
+      "CSV type accepts only STORE, USP, WAREHOUSE or WMS2; timeZone needs a Zone ID",
+    ],
+  },
+  quiz: [
+    {
+      question: "Which of these is a fulfillment location?",
+      choices: [
+        "The supplier's Tirupur factory",
+        "The client's Bangalore warehouse",
+        "The customer's Pune address",
+        "The transporter's hub",
+      ],
+      answer: 1,
+      explain:
+        "A fulfillment location is the client's own warehouse or store. Supplier and customer addresses are partner locations.",
+    },
+    {
+      question: "A retail store needs to fulfill online orders. Which Location Type?",
+      choices: ["Warehouse", "Store", "USP", "WMS2"],
+      answer: 1,
+      explain: "Store type enables Ship-from-Store, where the shop acts as a mini-warehouse for online orders.",
+    },
+    {
+      question: "Stock sits with a vendor but the client wants to sell it. Which type fits?",
+      choices: ["USP", "Warehouse", "Store", "WMS2"],
+      answer: 0,
+      explain:
+        "USP / vendor setup lets OMS expose and allocate inventory that is not in the client's own warehouse.",
+    },
+    {
+      question: "Which field drives SLA and dispatch cut-offs?",
+      choices: ["Area", "Timezone", "Address Line 2", "Contact Number"],
+      answer: 1,
+      explain: "Timezone drives every timer on the location, which is why it is mandatory.",
+    },
+    {
+      question: "In the Bulk Upload CSV, the type column accepts…",
+      choices: [
+        "Any free text",
+        "Only STORE, USP, WAREHOUSE or WMS2",
+        "Only numbers",
+        "PRIMARY or SECONDARY",
+      ],
+      answer: 1,
+      explain: "Anything outside those four values is rejected. timeZone likewise needs a Zone ID like Asia/Kolkata.",
+    },
+  ],
+  steps: [
+    {
+      element: "#oms-filter-bar",
+      title: "Fulfillment Locations",
+      description:
+        "A <strong>fulfillment location</strong> is a place the client ships from and receives into — a warehouse, a store, or a vendor setup. Without it OMS cannot tell where stock sits or where an order should be processed.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Browse",
+      skillIndex: 1,
+    },
+    {
+      element: "#oms-location-type",
+      title: "Location Type",
+      description:
+        "Filter by type. <strong>Warehouse</strong> stores and ships stock; <strong>Store</strong> fulfills online orders from a shop (Ship-from-Store); <strong>USP</strong> exposes vendor-held stock; <strong>WMS2</strong> is a warehouse operated through a linked WMS instance.",
+      practicePrompt: "Warehouse",
+      expected: { type: "select", selector: "#oms-location-type", value: "WAREHOUSE" },
+      skillLabel: "Browse",
+      skillIndex: 1,
+    },
+    {
+      element: "#oms-category",
+      title: "Category",
+      description:
+        "<strong>PRIMARY</strong> is the main site; <strong>SECONDARY</strong> is a backup that secondary allocation can fall back to when the primary is short.",
+      practicePrompt: "Primary",
+      expected: { type: "select", selector: "#oms-category", value: "PRIMARY" },
+      skillLabel: "Browse",
+      skillIndex: 1,
+    },
+    {
+      element: "#oms-btn-refresh",
+      title: "Refresh",
+      description: "Filters do not apply until you Refresh.",
+      expected: { type: "action" },
+      commonMistakes: "Reading a stale list because Refresh was never clicked.",
+      skillLabel: "Browse",
+      skillIndex: 1,
+    },
+    {
+      element: "#oms-find-results",
+      title: "Find in results",
+      description: "Narrows the rows already loaded. Example: <strong>kisah</strong>",
+      practicePrompt: "kisah",
+      expected: { type: "input", selector: "#oms-find-results", value: "kisah" },
+      skillLabel: "Browse",
+      skillIndex: 2,
+    },
+    {
+      element: "#oms-results-table",
+      title: "The directory",
+      description:
+        "Check whether the location already exists before creating it. The <strong>Location ID</strong> is what you quote in tickets and what client mapping and WMS setup refer to.",
+      expected: { type: "action" },
+      side: "top",
+      skillLabel: "Browse",
+      skillIndex: 2,
+    },
+    {
+      element: "#oms-btn-add",
+      title: "Add New Location",
+      description: "Opens the create dialog. Click <strong>Next</strong> to continue inside it.",
+      expected: { type: "action" },
+      openModalOnNext: "modal-add-location",
+      skillLabel: "Add",
+      skillIndex: 3,
+    },
+
+    // ---- Scenario split: single form vs CSV ----
+    {
+      element: "#modal-add-location-tabs",
+      title: "Two ways in",
+      description:
+        "<strong>Add New Fulfillment Location</strong> creates one location by hand. <strong>Bulk Upload</strong> takes a CSV. We are adding a single warehouse, so stay on the form.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Add",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#modal-add-location-tabs",
+      title: "Two ways in",
+      description:
+        "The form creates one location at a time. For 40 stores that is far too slow — switch to <strong>Bulk Upload</strong> and load them from a CSV.",
+      expected: { type: "action" },
+      switchTabOnNext: "#tab-bulk-upload",
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 3,
+      scenarioIds: ["bulk"],
+    },
+
+    // ---- Single location form ----
+    {
+      element: "#field-oms-name",
+      title: "Name *",
+      description: "Required. Use a name ops will recognise. Example: <strong>Demo Central Warehouse</strong>",
+      practicePrompt: "Demo Central Warehouse",
+      required: true,
+      expected: { type: "input", selector: "#oms-location-name", value: "Demo Central Warehouse" },
+      side: "right",
+      skillLabel: "Add",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-loc-type-wrap",
+      title: "Location Type *",
+      description:
+        "Required, and it changes how the location behaves. Pick <strong>Warehouse</strong> — stock is received via GRN, stored in bins, then picked and packed here.",
+      practicePrompt: "Warehouse",
+      required: true,
+      commonMistakes: "Choosing Store for a warehouse — it enables Ship-from-Store behaviour instead.",
+      expected: { type: "radio", name: "oms-loc-type", value: "Warehouse" },
+      side: "left",
+      skillLabel: "Add",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-contact-name",
+      title: "Contact Name *",
+      description: "Required. Who runs this site. Example: <strong>John Doe</strong>",
+      practicePrompt: "John Doe",
+      required: true,
+      expected: { type: "input", selector: "#oms-contact-name", value: "John Doe" },
+      side: "right",
+      skillLabel: "Add",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-contact-more",
+      title: "Contact Email / Number",
+      description: "Both optional — this is who gets called when a dispatch from this site goes wrong.",
+      practicePrompt: "john.doe@example.com",
+      expected: { type: "input", selector: "#oms-contact-email", value: "john.doe@example.com" },
+      onWatchFill: () => fillInput("#oms-contact-number", "9876543210"),
+      side: "left",
+      skillLabel: "Add",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-address1",
+      title: "Address Line 1 *",
+      description:
+        "Required. The physical address — routing uses it to work out distance to the customer. Example: <strong>Plot 42, Industrial Area Phase 2</strong>",
+      practicePrompt: "Plot 42, Industrial Area Phase 2",
+      required: true,
+      expected: { type: "input", selector: "#oms-address1", value: "Plot 42, Industrial Area Phase 2" },
+      side: "right",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-address-more",
+      title: "Address Line 2 / Area",
+      description: "Both optional. Useful when the site is hard to find on a large industrial estate.",
+      practicePrompt: "Whitefield",
+      expected: { type: "input", selector: "#oms-area", value: "Whitefield" },
+      side: "left",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-city",
+      title: "City *",
+      description: "Required. Example: <strong>Bengaluru</strong>",
+      practicePrompt: "Bengaluru",
+      required: true,
+      expected: { type: "input", selector: "#oms-city", value: "Bengaluru" },
+      side: "right",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-pincode",
+      title: "Pincode *",
+      description: "Required. Example: <strong>560066</strong>",
+      practicePrompt: "560066",
+      required: true,
+      expected: { type: "input", selector: "#oms-pincode", value: "560066" },
+      side: "top",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-country",
+      title: "Country *",
+      description: "Required, and pick it before State — the State list depends on it. Example: <strong>India</strong>",
+      practicePrompt: "India",
+      required: true,
+      expected: { type: "select", selector: "#oms-country", value: "IN" },
+      side: "left",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-state",
+      title: "State *",
+      description: "Required. Example: <strong>Karnataka</strong>",
+      practicePrompt: "Karnataka",
+      required: true,
+      commonMistakes: "Empty State list usually means Country was never selected.",
+      expected: { type: "select", selector: "#oms-state", value: "KA" },
+      side: "right",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#oms-location-tz",
+      title: "Timezone *",
+      description:
+        "Required. Every SLA timer and dispatch cut-off on this site runs on it. Example: <strong>IST - Asia/Kolkata</strong>",
+      practicePrompt: "IST",
+      required: true,
+      expected: { type: "select", selector: "#oms-location-tz", value: "IST" },
+      side: "left",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#modal-add-location-actions",
+      title: "Submit",
+      description:
+        "Creates the location and issues its Location ID. It still has to be <strong>mapped to the client</strong> before orders can route to it.",
+      expected: { type: "action" },
+      onWatchFill: () => {
+        document.getElementById("oms-btn-submit")?.click();
+      },
+      side: "top",
+      skillLabel: "Add",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+
+    // ---- Bulk upload ----
+    {
+      element: "#oms-bulk-panel",
+      title: "Upload Fulfillment Location(s)",
+      description:
+        "One CSV creates many locations at once — the normal route when onboarding a whole store estate for Ship-from-Store.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 3,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#oms-bulk-file",
+      title: "Choose file",
+      description: "Use <strong>Browse</strong> to pick the filled-in CSV from your machine.",
+      expected: { type: "action" },
+      onWatchFill: () => {
+        document.getElementById("oms-btn-browse")?.click();
+      },
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 3,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#oms-bulk-limit",
+      title: "Row limit & template",
+      description:
+        "Maximum <strong>1000 rows</strong> per upload — split anything larger into batches. Always start from <strong>Download Template</strong> so the columns match.",
+      expected: { type: "action" },
+      commonMistakes: "Hand-building a CSV with the wrong columns instead of using the template.",
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 4,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#oms-bulk-note",
+      title: "Column rules",
+      description:
+        "Two columns are strict: <strong>type</strong> accepts only STORE, USP, WAREHOUSE or WMS2, and <strong>timeZone</strong> needs a Zone ID such as Asia/Kolkata — not IST.",
+      expected: { type: "action" },
+      commonMistakes: "Writing IST in timeZone, or a type value outside the four accepted ones — the row is rejected.",
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 4,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#modal-bulk-actions",
+      title: "Upload",
+      description:
+        "Submits the file. Rejected rows come back with a reason — fix and re-upload just those. Each new location still needs mapping to the client.",
+      expected: { type: "action" },
+      onWatchFill: () => {
+        document.getElementById("oms-btn-upload")?.click();
+      },
+      side: "top",
+      skillLabel: "Bulk",
+      skillIndex: 4,
+      scenarioIds: ["bulk"],
+    },
+  ],
+};

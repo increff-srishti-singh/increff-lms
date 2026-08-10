@@ -1,0 +1,498 @@
+import type { TourConfig } from "@/features/learning/types";
+import { getModule } from "@/shared/lib/curriculum";
+import { fillInput } from "@/shared/lib/tour-utils";
+
+const HOME = "/";
+const mod = getModule("oms-supplier")!;
+
+/** Reveal the CSV field list without toggling it shut if it is already open. */
+function openCsvFields() {
+  const panel = document.getElementById("sup-fields-panel");
+  if (panel?.classList.contains("hidden")) {
+    document.getElementById("sup-btn-fields")?.click();
+  }
+}
+
+export const SuppliersTour: TourConfig = {
+  moduleId: "oms-supplier",
+  pageKey: "oms-supplier",
+  pageHref: "/oms/suppliers",
+  parentModuleName: "Suppliers",
+  track: "OMS",
+  number: mod.number,
+  title: mod.title,
+  skills: mod.skills,
+  homeHref: HOME,
+  glossaryKeys: [
+    "Supplier",
+    "Client",
+    "Partner Location",
+    "ASN",
+    "Allow Excess GRN",
+    "Is ASN Expected",
+    "Storage Inspection Required",
+    "Cross Dock Inspection Required",
+    "Cross Dock",
+    "Partner Priority",
+    "GRN",
+  ],
+  pitfalls: [
+    "Confusing supplier (sends goods in) with customer (receives goods out)",
+    "Leaving Is ASN Expected TRUE for a supplier that never sends one — receiving stalls",
+    "Turning on inspection but leaving the minimum percentages blank",
+    "Creating the supplier but never creating its factory as a partner location",
+    "CSV priority outside 1–5, or missing a mandatory column",
+  ],
+  scenarios: [
+    {
+      id: "add-one",
+      title: "Add one supplier",
+      story:
+        "ABC Fashion is onboarding XYZ Garments in Tirupur. Search first, then create the supplier and set its inward rules — ASN expected, QC before storage.",
+    },
+    {
+      id: "bulk",
+      title: "Bulk upload suppliers",
+      story:
+        "A merger brings 200 vendors across at once. Use the Bulk Upload tab, check the CSV field rules, and load them in one file.",
+    },
+  ],
+  summary: {
+    title: "Suppliers — complete",
+    intro:
+      "You registered a supplier and configured the rules that govern how its goods are received.",
+    takeaways: [
+      "Supplier = who sends goods in; customer = who receives goods out",
+      "Allow Excess GRN decides whether over-delivery becomes normal stock or is held as excess",
+      "Is ASN Expected makes the supplier pre-announce shipments so receiving is faster",
+      "Inspection flags force QC — before storage, or on cross-dock goods that ship straight out",
+    ],
+    recap: [
+      "Inward flow: supplier partner location → client fulfillment location",
+      "Priority 1 is most critical, 5 least",
+      "Each supplier factory or branch still needs its own partner location",
+      "Bulk CSV takes up to 3000 rows; check the 21-field template first",
+    ],
+  },
+  quiz: [
+    {
+      question: "ABC Fashion buys T-shirts from XYZ Garments and sells to RetailMart. Who is the supplier?",
+      choices: ["ABC Fashion", "XYZ Garments", "RetailMart", "The transporter"],
+      answer: 1,
+      explain: "The supplier sends goods to the client. ABC Fashion is the client; RetailMart is the customer.",
+    },
+    {
+      question: "A PO says 100 pieces and 105 arrive. With Allow Excess GRN ON, the extra 5 are…",
+      choices: [
+        "Rejected at the gate",
+        "Added to inventory as normal stock",
+        "Held separately as excess",
+        "Returned to the supplier",
+      ],
+      answer: 1,
+      explain: "ON accepts the over-delivery as normal stock. OFF holds the extra pieces separately as excess.",
+    },
+    {
+      question: "Is ASN Expected means the supplier must…",
+      choices: [
+        "Send shipment details before the goods arrive",
+        "Inspect the goods themselves",
+        "Deliver within 24 hours",
+        "Accept excess returns",
+      ],
+      answer: 0,
+      explain: "An Advance Shipment Notice pre-alerts the warehouse so receiving can be prepared and verified.",
+    },
+    {
+      question: "Goods are received and dispatched immediately without being stored. QC on those needs…",
+      choices: [
+        "Storage Inspection Required",
+        "Cross Dock Inspection Required",
+        "Allow Excess GRN",
+        "No setting — cross-dock skips QC",
+      ],
+      answer: 1,
+      explain: "Cross Dock Inspection Required forces QC even when stock never goes into storage.",
+    },
+    {
+      question: "In the supplier CSV, priority accepts…",
+      choices: ["Any number", "1 to 5, where 1 is most critical", "TRUE or FALSE", "1 to 10"],
+      answer: 1,
+      explain: "Priority 1 denotes most critical and 5 least critical. Anything outside 1–5 is rejected.",
+    },
+  ],
+  steps: [
+    {
+      element: "#sup-search-bar",
+      title: "Suppliers",
+      description:
+        "A <strong>supplier</strong> is the vendor the client buys from — the party that sends stock in. Not to be confused with a customer, who receives stock going out.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Search",
+      skillIndex: 1,
+    },
+    {
+      element: "#sup-search-by",
+      title: "Search By",
+      description:
+        "Pick which field to search on — <strong>Supplier Code</strong>, <strong>Supplier ID</strong> or <strong>Supplier Name</strong>. The box beside it re-labels to match.",
+      practicePrompt: "Supplier Name",
+      expected: { type: "select", selector: "#sup-search-by", value: "supplier-name" },
+      skillLabel: "Search",
+      skillIndex: 1,
+    },
+    {
+      element: "#sup-search-value",
+      title: "Search value",
+      description: "Check whether the vendor already exists before creating it. Example: <strong>XYZ</strong>",
+      practicePrompt: "XYZ",
+      expected: { type: "input", selector: "#sup-search-value", value: "XYZ" },
+      commonMistakes: "Creating a duplicate supplier because nobody searched first.",
+      skillLabel: "Search",
+      skillIndex: 1,
+    },
+    {
+      element: "#sup-btn-search",
+      title: "Search",
+      description: "Runs the query. <strong>Page Size</strong> controls how many rows come back per page.",
+      expected: { type: "action" },
+      skillLabel: "Search",
+      skillIndex: 1,
+    },
+    {
+      element: "#sup-results-table",
+      title: "The directory",
+      description:
+        "Beyond name and code, the list shows the inward rules at a glance — excess GRN, ASN, inspection — plus <strong>Priority</strong>. <strong>View Locations</strong> opens the supplier's partner locations, its actual factories and warehouses.",
+      expected: { type: "action" },
+      side: "top",
+      skillLabel: "Search",
+      skillIndex: 2,
+    },
+    {
+      element: "#sup-btn-add",
+      title: "Add Supplier",
+      description: "Opens the create dialog. Click <strong>Next</strong> to continue inside it.",
+      expected: { type: "action" },
+      openModalOnNext: "modal-add-supplier",
+      skillLabel: "Create",
+      skillIndex: 2,
+    },
+
+    // ---- Scenario split ----
+    {
+      element: "#modal-add-supplier-tabs",
+      title: "Two ways in",
+      description:
+        "<strong>Add New Supplier</strong> creates one vendor by hand. <strong>Bulk Upload</strong> takes a CSV. We are onboarding a single vendor, so stay on the form.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Create",
+      skillIndex: 2,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#modal-add-supplier-tabs",
+      title: "Two ways in",
+      description:
+        "200 vendors one at a time is not realistic — switch to <strong>Bulk Upload</strong> and load them from a CSV.",
+      expected: { type: "action" },
+      switchTabOnNext: "#tab-bulk-supplier",
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 2,
+      scenarioIds: ["bulk"],
+    },
+
+    // ---- Single supplier form ----
+    {
+      element: "#field-sup-name",
+      title: "Name *",
+      description: "Required. The vendor's business name. Example: <strong>XYZ Garments</strong>",
+      practicePrompt: "XYZ Garments",
+      required: true,
+      expected: { type: "input", selector: "#sup-name", value: "XYZ Garments" },
+      side: "right",
+      skillLabel: "Create",
+      skillIndex: 2,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-code",
+      title: "Supplier Code *",
+      description:
+        "Required and unique. This is what POs and inward orders quote, so use the code procurement already uses. Example: <strong>XYZ-4567889</strong>",
+      practicePrompt: "XYZ-4567889",
+      required: true,
+      expected: { type: "input", selector: "#sup-code", value: "XYZ-4567889" },
+      side: "bottom",
+      skillLabel: "Create",
+      skillIndex: 2,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-priority",
+      title: "Priority",
+      description:
+        "How critical this vendor is: <strong>1 is most critical, 5 least</strong>. Defaults to 3. XYZ Garments is a core supplier, so set <strong>1</strong>.",
+      practicePrompt: "1",
+      expected: { type: "select", selector: "#sup-priority", value: "1" },
+      side: "left",
+      skillLabel: "Create",
+      skillIndex: 2,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-excess-grn",
+      title: "Allow Excess GRN *",
+      description:
+        "What happens when more arrives than the PO says. A PO of 100 with 105 delivered: <strong>TRUE</strong> takes all 105 into stock, <strong>FALSE</strong> holds the extra 5 as excess. Pick <strong>FALSE</strong> so over-delivery gets reviewed.",
+      practicePrompt: "FALSE",
+      required: true,
+      expected: { type: "radio", name: "sup-excess-grn", value: "FALSE" },
+      side: "right",
+      skillLabel: "Inward rules",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-asn",
+      title: "Is ASN Expected *",
+      description:
+        "An <strong>ASN</strong> is a pre-alert listing what is coming before the truck arrives, so the dock can prepare and receive against it. XYZ Garments does send one — pick <strong>TRUE</strong>.",
+      practicePrompt: "TRUE",
+      required: true,
+      commonMistakes: "Setting TRUE for a vendor that never sends an ASN — receiving then waits for a document that never comes.",
+      expected: { type: "radio", name: "sup-asn", value: "TRUE" },
+      side: "bottom",
+      skillLabel: "Inward rules",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-storage-insp",
+      title: "Storage Inspection Required *",
+      description:
+        "Forces QC before stock is put away, so damaged or wrong items never reach the shelves. Pick <strong>TRUE</strong> — watch the two percentage boxes below unlock.",
+      practicePrompt: "TRUE",
+      required: true,
+      expected: { type: "radio", name: "sup-storage-insp", value: "TRUE" },
+      side: "left",
+      skillLabel: "Inward rules",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-storage-pct",
+      title: "Storage inspection thresholds",
+      description:
+        "Only editable because inspection is ON. <strong>Min. Storage Inspect %</strong> is how much of the consignment must be checked; <strong>Pass %</strong> is the share that must pass for the batch to be accepted.",
+      practicePrompt: "10",
+      expected: { type: "input", selector: "#sup-storage-min-pct", value: "10" },
+      onWatchFill: () => fillInput("#sup-storage-pass-pct", "95"),
+      commonMistakes: "Turning inspection on but leaving these blank.",
+      side: "bottom",
+      skillLabel: "Inward rules",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#field-sup-crossdock-insp",
+      title: "Cross Dock Inspection Required *",
+      description:
+        "<strong>Cross-dock</strong> means goods are received and shipped straight back out without being stored. This forces QC on that fast path too. XYZ Garments does not cross-dock — leave <strong>FALSE</strong>.",
+      practicePrompt: "FALSE",
+      required: true,
+      expected: { type: "radio", name: "sup-crossdock-insp", value: "FALSE" },
+      side: "left",
+      skillLabel: "Inward rules",
+      skillIndex: 3,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-contact-name",
+      title: "Contact Name *",
+      description: "Required. Who to chase about a delayed or short shipment. Example: <strong>Ravi Menon</strong>",
+      practicePrompt: "Ravi Menon",
+      required: true,
+      expected: { type: "input", selector: "#sup-contact-name", value: "Ravi Menon" },
+      side: "right",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-contact-more",
+      title: "Contact Email / Number",
+      description: "Both optional but worth filling — ASN and shortfall queries go here.",
+      practicePrompt: "ravi@xyzgarments.in",
+      expected: { type: "input", selector: "#sup-contact-email", value: "ravi@xyzgarments.in" },
+      onWatchFill: () => fillInput("#sup-contact-number", "+91-9845012345"),
+      side: "left",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-address1",
+      title: "Address Line 1 *",
+      description: "Required. Example: <strong>Unit 7, Textile Park</strong>",
+      practicePrompt: "Unit 7, Textile Park",
+      required: true,
+      expected: { type: "input", selector: "#sup-address1", value: "Unit 7, Textile Park" },
+      side: "right",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-address-more",
+      title: "Address Line 2 / Area",
+      description: "Both optional. Example area: <strong>Tirupur</strong>",
+      practicePrompt: "Tirupur",
+      expected: { type: "input", selector: "#sup-area", value: "Tirupur" },
+      side: "left",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-city",
+      title: "City *",
+      description: "Required. Example: <strong>Tirupur</strong>",
+      practicePrompt: "Tirupur",
+      required: true,
+      expected: { type: "input", selector: "#sup-city", value: "Tirupur" },
+      side: "right",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-pincode",
+      title: "Pincode *",
+      description: "Required. Example: <strong>641604</strong>",
+      practicePrompt: "641604",
+      required: true,
+      expected: { type: "input", selector: "#sup-pincode", value: "641604" },
+      side: "top",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-country",
+      title: "Country *",
+      description: "Required, and pick it before State. Example: <strong>India</strong>",
+      practicePrompt: "India",
+      required: true,
+      expected: { type: "select", selector: "#sup-country", value: "IN" },
+      side: "left",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#sup-state",
+      title: "State *",
+      description: "Required. Example: <strong>Tamil Nadu</strong>",
+      practicePrompt: "Tamil Nadu",
+      required: true,
+      expected: { type: "select", selector: "#sup-state", value: "TN" },
+      side: "right",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+    {
+      element: "#modal-add-supplier-actions",
+      title: "Submit",
+      description:
+        "Creates the supplier and issues its Supplier ID. Next you would add its factory as a <strong>partner location</strong>, then it can be used on inward orders.",
+      expected: { type: "action" },
+      onWatchFill: () => {
+        document.getElementById("sup-btn-submit")?.click();
+      },
+      side: "top",
+      skillLabel: "Address",
+      skillIndex: 4,
+      scenarioIds: ["add-one"],
+    },
+
+    // ---- Bulk upload ----
+    {
+      element: "#sup-bulk-panel",
+      title: "Upload Supplier(s)",
+      description: "One CSV registers many vendors at once — the normal route after a merger or a bulk onboarding.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 3,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#sup-bulk-file",
+      title: "Choose file",
+      description: "Use <strong>Browse</strong> to pick the filled-in CSV.",
+      expected: { type: "action" },
+      onWatchFill: () => {
+        document.getElementById("sup-btn-browse")?.click();
+      },
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 3,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#sup-bulk-note",
+      title: "Priority in the CSV",
+      description:
+        "The priority column takes <strong>1 to 5 only</strong> — 1 most critical, 5 least. Any other value is rejected.",
+      expected: { type: "action" },
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 3,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#sup-bulk-limit",
+      title: "Row limit & template",
+      description:
+        "Up to <strong>3000 rows</strong> per upload — more than the 1000 allowed for fulfillment locations. Always start from <strong>Download Template</strong>, and use the <strong>i</strong> icon to see what each column means.",
+      expected: { type: "action" },
+      onEnter: openCsvFields,
+      side: "bottom",
+      skillLabel: "Bulk",
+      skillIndex: 4,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#sup-fields-panel",
+      title: "The 21 CSV fields",
+      description:
+        "Every column, its data type, and whether it is mandatory. <strong>name</strong>, <strong>partnerCode</strong>, <strong>contactName</strong>, <strong>street1</strong>, city, pincode, country, state and the three boolean rules are all required — a row missing any of them fails.",
+      expected: { type: "action" },
+      onEnter: openCsvFields,
+      commonMistakes: "Uploading without checking mandatory columns, then re-doing the whole file.",
+      side: "top",
+      skillLabel: "Bulk",
+      skillIndex: 4,
+      scenarioIds: ["bulk"],
+    },
+    {
+      element: "#modal-bulk-supplier-actions",
+      title: "Upload",
+      description:
+        "Submits the file. Rejected rows come back with a reason — fix just those and re-upload. Each supplier still needs its partner locations before it can be used on an inward order.",
+      expected: { type: "action" },
+      onWatchFill: () => {
+        document.getElementById("sup-btn-upload")?.click();
+      },
+      side: "top",
+      skillLabel: "Bulk",
+      skillIndex: 4,
+      scenarioIds: ["bulk"],
+    },
+  ],
+};
