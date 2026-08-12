@@ -87,14 +87,24 @@ export function prepareDomForStep(
 function waitForStepDom(overlay: HTMLElement | null, ms = 400): Promise<void> {
   if (overlay?.id) openModal(overlay.id);
   return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      resolve();
+    };
+    // Unconditional backstop: a single missed or throttled rAF tick (background tab,
+    // heavy paint, HMR pause) must never wedge tour startup forever.
+    setTimeout(finish, ms);
+
+    if (!overlay) {
+      requestAnimationFrame(() => setTimeout(finish, 30));
+      return;
+    }
     const start = Date.now();
     const tick = () => {
-      if (!overlay) {
-        requestAnimationFrame(() => setTimeout(resolve, 30));
-        return;
-      }
       if (overlay.classList.contains("open") || Date.now() - start > ms) {
-        requestAnimationFrame(() => setTimeout(resolve, 30));
+        finish();
         return;
       }
       requestAnimationFrame(tick);
