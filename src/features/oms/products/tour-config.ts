@@ -3,6 +3,7 @@ import { getModule } from "@/shared/lib/curriculum";
 
 const HOME = "/";
 const mod = getModule("oms-product")!;
+const ATTR_CONFIG_RESUME = "wmsProductAttrResume";
 
 /** Reveal a tab's CSV field list without toggling it shut if it is already open. */
 function openFields(tabId: string) {
@@ -43,6 +44,12 @@ export const ProductsTour: TourConfig = {
       title: "Product",
       story:
         "ABC Fashion is going live with its SKU catalogue. Walk every Products tab — create SKUs, understand edits, enable perishable tracking, and define a bundle and a UOM breakdown.",
+    },
+    {
+      id: "attribute-config",
+      title: "Attribute Configuration",
+      story:
+        "ABC Fashion wants a Fabric field and a Fragile flag on every SKU, visible to warehouse staff. Head to Attributes Configuration to set it up.",
     },
   ],
   summary: {
@@ -122,6 +129,19 @@ export const ProductsTour: TourConfig = {
       side: "bottom",
       skillLabel: "New",
       skillIndex: 1,
+    },
+    {
+      element: "#prod-tabs",
+      title: "Attribute Configuration",
+      description:
+        "Custom fields live on their own screen — <strong>Attributes Configuration</strong> — where you define what extra information a SKU can carry, and how it shows up in WMS.",
+      expected: { type: "action" },
+      navigateTo: "/oms/attributes-configuration",
+      navigateStorageKey: ATTR_CONFIG_RESUME,
+      side: "bottom",
+      skillLabel: "Attributes",
+      skillIndex: 1,
+      scenarioIds: ["attribute-config"],
     },
     {
       element: "#prod-new-panel",

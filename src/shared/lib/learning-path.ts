@@ -38,6 +38,9 @@ export const LEARNING_NEXT_BY_PAGE_KEY: Record<string, LearningNext> = {
   "oms-customer": { type: "module", href: "/oms/partner-locations", title: "Partner Locations" },
   "oms-partner-location": { type: "module", href: "/oms/products", title: "Products" },
   "oms-product": { type: "dashboard" },
+  // A satellite page reached only via Products' scenario picker — always returns to
+  // dashboard, never chains onward, regardless of what comes after Products later.
+  "oms-product-attributes": { type: "dashboard" },
 };
 
 /**

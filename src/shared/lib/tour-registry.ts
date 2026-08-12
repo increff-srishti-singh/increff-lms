@@ -12,6 +12,7 @@ import { SuppliersTour } from "@/features/oms/suppliers/tour-config";
 import { CustomersTour } from "@/features/oms/customers/tour-config";
 import { PartnerLocationsTour } from "@/features/oms/partner-locations/tour-config";
 import { ProductsTour } from "@/features/oms/products/tour-config";
+import { AttributesConfigTour } from "@/features/oms/attributes-configuration/tour-config";
 
 /** pageKey → tour config (mirrors original pageBuilders registry). */
 export const TOUR_BY_PAGE_KEY: Record<string, TourConfig> = {
@@ -32,6 +33,7 @@ export const TOUR_BY_PAGE_KEY: Record<string, TourConfig> = {
   [CustomersTour.pageKey]: CustomersTour,
   [PartnerLocationsTour.pageKey]: PartnerLocationsTour,
   [ProductsTour.pageKey]: ProductsTour,
+  [AttributesConfigTour.pageKey]: AttributesConfigTour,
 };
 
 /** Primary learning module path → tour (navbar / dashboard entry). */
@@ -53,6 +55,7 @@ export const TOUR_BY_HREF: Record<string, TourConfig> = {
   "/oms/customers": CustomersTour,
   "/oms/partner-locations": PartnerLocationsTour,
   "/oms/products": ProductsTour,
+  "/oms/attributes-configuration": AttributesConfigTour,
 };
 
 export const AUTO_CONTINUE_KEY = "increff-tour-auto-continue";

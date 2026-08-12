@@ -78,6 +78,11 @@ export const GLOSSARY: Record<string, string> = {
   "Bundled SKU": "A virtual combo SKU with no physical stock of its own; its sellable quantity is limited by whichever child SKU has the least stock. GRN and picking happen on the child SKUs, never the bundle.",
   "UOM (Unit of Measure)": "Defines how a larger packing unit breaks into smaller ones, e.g. one Case = 5 Boxes, one Box = 10 Each.",
   "Perishable SKU": "A SKU with expiry or shelf life (food, cosmetics, medicines) that needs batch/expiry tracking during inward and outward flows.",
+  "Standard SKU Attribute": "A default SKU field created automatically for every client — Brand, MRP, Size, Category, and similar. Some are locked and cannot be reconfigured.",
+  "Custom SKU Attribute": "An extra SKU field the client defines from the Attributes Configuration screen — up to 15 per client, keyed Attribute1 through Attribute15.",
+  "Displayable Attribute": "Whether an attribute shows on WMS screens (GRN, QC, picking, packing) wherever SKU master data appears. Capped at 10 normal attributes; dimensions have separate headroom.",
+  "Highlighted Attribute": "An attribute visually emphasized in WMS. Capped at 2, and only available for attributes that are already displayable.",
+  "Searchable Attribute": "A custom SKU attribute usable to search during GRN instead of Client SKU ID. Only Attribute1 through Attribute5 can ever be searchable — a fixed rule tied to the key, not a raisable count.",
 };
 
 export const MODULES: ModuleDef[] = [
