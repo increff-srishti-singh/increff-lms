@@ -7,11 +7,6 @@ import { Breadcrumb } from "@/shared/components/breadcrumb";
 import { InventoryPoolTour } from "@/features/oms/inventory-pool/tour-config";
 import { showToast } from "@/shared/lib/tour-utils";
 
-const CLIENTS = [
-  { value: "test11", label: "Test11" },
-  { value: "abc-fashion", label: "ABC Fashion" },
-];
-
 const LOCATIONS = [
   { value: "demo-central-warehouse", label: "Demo Central Warehouse" },
   { value: "tested512", label: "tested512" },
@@ -78,19 +73,6 @@ function OmsInventoryPoolContent() {
   return (
     <div className="max-w-2xl">
       <div className="grid grid-cols-[220px_1fr] gap-y-5 items-center max-w-[520px]">
-        <label className="text-[14px] font-semibold text-slate-800">Client</label>
-        <select
-          id="pool-client"
-          defaultValue="test11"
-          className="h-9 px-2.5 border border-slate-300 rounded bg-white text-[13px] outline-none focus:border-blue-500 max-w-[280px]"
-        >
-          {CLIENTS.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-
         <label className="text-[14px] font-semibold text-slate-800">Fulfillment Location</label>
         <select
           id="pool-location"
