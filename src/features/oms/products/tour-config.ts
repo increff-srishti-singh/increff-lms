@@ -4,6 +4,7 @@ import { getModule } from "@/shared/lib/curriculum";
 const HOME = "/";
 const mod = getModule("oms-product")!;
 const ATTR_CONFIG_RESUME = "wmsProductAttrResume";
+const DIMENSIONS_RESUME = "wmsProductDimensionsResume";
 
 /** Reveal a tab's CSV field list without toggling it shut if it is already open. */
 function openFields(tabId: string) {
@@ -50,6 +51,12 @@ export const ProductsTour: TourConfig = {
       title: "Attribute Configuration",
       story:
         "ABC Fashion wants a Fabric field and a Fragile flag on every SKU, visible to warehouse staff. Head to Attributes Configuration to set it up.",
+    },
+    {
+      id: "capture-sku-dimension",
+      title: "Capture SKU Dimension",
+      story:
+        "SHIRT001 needs its physical size on file before packing can rely on it. Head to Capture SKU Dimensions to measure it.",
     },
   ],
   summary: {
@@ -142,6 +149,19 @@ export const ProductsTour: TourConfig = {
       skillLabel: "Attributes",
       skillIndex: 1,
       scenarioIds: ["attribute-config"],
+    },
+    {
+      element: "#prod-tabs",
+      title: "Capture SKU Dimension",
+      description:
+        "Bulk dimensions come through the New/Edit CSV — but for one SKU at a time, there's a dedicated screen: <strong>Capture SKU Dimensions</strong>.",
+      expected: { type: "action" },
+      navigateTo: "/oms/capture-sku-dimensions",
+      navigateStorageKey: DIMENSIONS_RESUME,
+      side: "bottom",
+      skillLabel: "Dimensions",
+      skillIndex: 1,
+      scenarioIds: ["capture-sku-dimension"],
     },
     {
       element: "#prod-new-panel",

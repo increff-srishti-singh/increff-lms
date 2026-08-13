@@ -83,6 +83,7 @@ export const GLOSSARY: Record<string, string> = {
   "Displayable Attribute": "Whether an attribute shows on WMS screens (GRN, QC, picking, packing) wherever SKU master data appears. Capped at 10 normal attributes; dimensions have separate headroom.",
   "Highlighted Attribute": "An attribute visually emphasized in WMS. Capped at 2, and only available for attributes that are already displayable.",
   "Searchable Attribute": "A custom SKU attribute usable to search during GRN instead of Client SKU ID. Only Attribute1 through Attribute5 can ever be searchable — a fixed rule tied to the key, not a raisable count.",
+  "SKU Dimensions": "Length, breadth, height and weight captured against a SKU. Length/breadth/height are all-or-nothing together; weight is independent. Capturing a value here does not display it in WMS on its own — that still needs Attributes Configuration.",
 };
 
 export const MODULES: ModuleDef[] = [
