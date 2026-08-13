@@ -36,7 +36,7 @@ export const LEARNING_NEXT_BY_PAGE_KEY: Record<string, LearningNext> = {
   "oms-supplier": { type: "module", href: "/oms/customers", title: "Customers" },
   // Both parties' addresses are covered by the same Partner Locations screen.
   "oms-customer": { type: "module", href: "/oms/partner-locations", title: "Partner Locations" },
-  "oms-partner-location": { type: "module", href: "/oms/products", title: "Products" },
+  "oms-partner-location": { type: "module", href: "/oms/products", title: "Product Settings" },
   "oms-product": { type: "dashboard" },
   // Satellite pages reached only via Products' scenario picker — always return to
   // dashboard, never chain onward, regardless of what comes after Products later.

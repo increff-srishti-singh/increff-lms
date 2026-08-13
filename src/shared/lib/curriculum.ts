@@ -281,7 +281,7 @@ export const MODULES: ModuleDef[] = [
     id: "oms-product",
     track: "OMS",
     number: 16,
-    title: "Products",
+    title: "Product Settings",
     description: "Create, edit and configure SKUs — bundled combos, UOM breakdowns, and perishable batches.",
     href: "/oms/products",
     duration: "20–25 min",

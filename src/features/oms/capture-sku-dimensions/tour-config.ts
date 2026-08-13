@@ -9,7 +9,7 @@ export const CaptureSkuDimensionsTour: TourConfig = {
   pageKey: "oms-product-dimensions",
   pageHref: "/oms/capture-sku-dimensions",
   parentModuleName: "Capture SKU Dimensions",
-  learningModuleTitle: "Products",
+  learningModuleTitle: "Product Settings",
   learningModuleHref: "/oms/products",
   learningPageKey: "oms-product",
   track: "OMS",

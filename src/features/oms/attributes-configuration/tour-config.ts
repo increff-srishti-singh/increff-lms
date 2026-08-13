@@ -17,7 +17,7 @@ export const AttributesConfigTour: TourConfig = {
   pageKey: "oms-product-attributes",
   pageHref: "/oms/attributes-configuration",
   parentModuleName: "Attributes Configuration",
-  learningModuleTitle: "Products",
+  learningModuleTitle: "Product Settings",
   learningModuleHref: "/oms/products",
   learningPageKey: "oms-product",
   track: "OMS",
