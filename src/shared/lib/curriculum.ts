@@ -84,6 +84,10 @@ export const GLOSSARY: Record<string, string> = {
   "Highlighted Attribute": "An attribute visually emphasized in WMS. Capped at 2, and only available for attributes that are already displayable.",
   "Searchable Attribute": "A custom SKU attribute usable to search during GRN instead of Client SKU ID. Only Attribute1 through Attribute5 can ever be searchable — a fixed rule tied to the key, not a raisable count.",
   "SKU Dimensions": "Length, breadth, height and weight captured against a SKU. Length/breadth/height are all-or-nothing together; weight is independent. Capturing a value here does not display it in WMS on its own — that still needs Attributes Configuration.",
+  "Inventory Pool": "A virtual grouping of inventory within OMS, scoped to one client and one fulfillment location. Physical stock stays in WMS; OMS splits it into pools for allocation, reservation and channel exposure.",
+  "Common Pool": "The default, generic inventory pool for a client at a fulfillment location. Only one is allowed per client-location pair.",
+  "Reserved Pool": "An additional inventory pool created for a specific purpose — marketplace stock, store transfer, or other client-defined segregation. Every pool beyond the Common Pool is Reserved.",
+  Reservations: "The OMS flow for moving stock between inventory pools — e.g. Common to Reserved and back.",
 };
 
 export const MODULES: ModuleDef[] = [
@@ -290,6 +294,20 @@ export const MODULES: ModuleDef[] = [
       "Bulk-edit existing SKUs",
       "Enable perishable / batch tracking",
       "Define bundled and UOM SKUs",
+    ],
+  },
+  {
+    id: "oms-inventory",
+    track: "OMS",
+    number: 17,
+    title: "Inventory",
+    description: "Create virtual inventory pools that segregate stock at a fulfillment location.",
+    href: "/oms/inventory-pool",
+    duration: "10–12 min",
+    skills: [
+      "Understand Common vs Reserved pools",
+      "Create a reserved inventory pool",
+      "Link a pool to a client and fulfillment location",
     ],
   },
 ];

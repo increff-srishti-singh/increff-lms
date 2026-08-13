@@ -14,6 +14,7 @@ import { PartnerLocationsTour } from "@/features/oms/partner-locations/tour-conf
 import { ProductsTour } from "@/features/oms/products/tour-config";
 import { AttributesConfigTour } from "@/features/oms/attributes-configuration/tour-config";
 import { CaptureSkuDimensionsTour } from "@/features/oms/capture-sku-dimensions/tour-config";
+import { InventoryPoolTour } from "@/features/oms/inventory-pool/tour-config";
 
 /** pageKey → tour config (mirrors original pageBuilders registry). */
 export const TOUR_BY_PAGE_KEY: Record<string, TourConfig> = {
@@ -36,6 +37,7 @@ export const TOUR_BY_PAGE_KEY: Record<string, TourConfig> = {
   [ProductsTour.pageKey]: ProductsTour,
   [AttributesConfigTour.pageKey]: AttributesConfigTour,
   [CaptureSkuDimensionsTour.pageKey]: CaptureSkuDimensionsTour,
+  [InventoryPoolTour.pageKey]: InventoryPoolTour,
 };
 
 /** Primary learning module path → tour (navbar / dashboard entry). */
@@ -59,6 +61,7 @@ export const TOUR_BY_HREF: Record<string, TourConfig> = {
   "/oms/products": ProductsTour,
   "/oms/attributes-configuration": AttributesConfigTour,
   "/oms/capture-sku-dimensions": CaptureSkuDimensionsTour,
+  "/oms/inventory-pool": InventoryPoolTour,
 };
 
 export const AUTO_CONTINUE_KEY = "increff-tour-auto-continue";
